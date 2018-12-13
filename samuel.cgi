@@ -204,7 +204,7 @@ EOHTML
 
 }
 
-sub end_page {
+sub end_page($seed) {
     print<<EOHTML;
 </strong>
 
@@ -214,6 +214,7 @@ sub end_page {
 <input type="submit" value="another poem, man">
 </form></p>
 
+<p><strong><a href="./?s=${seed}">[link]</a></strong></p>
 <p><strong><a href="about.html">samuel, beat poet</a></strong></p>
 <p><strong><a href="technical.html">more about samuel</a></strong></p>
 <p><strong><a href="https://mikelynch.org/">back to mike's</a></strong></p>
@@ -236,15 +237,20 @@ EOHTML
 
 ######### main ###########
 
-$nstanza = 2 + int(rand($length / 2)) + int(rand($length / 2));
+$query = CGI->new;
 
 &start_page;
 
-$fake = srand(time ^ $$);
+$seed = $query->param('s') || (time ^ $$);
+
+$fake = srand($seed);
+
+$nstanza = 2 + int(rand($length / 2)) + int(rand($length / 2));
+
 
 for( 1..$nstanza ) {
     print "<p>" . &stanza . "</p>\n";
 }
 
 
-&end_page;
+&end_page($seed);
