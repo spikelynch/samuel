@@ -2,7 +2,10 @@
 
 # samuel, the last beat poet...
 
-use CGI;
+use base Exporter;
+
+our @EXPORT = qw(start_page end_page stanza);
+
 
 $egotism = .5;      # controls use of 'i' as a subject
 $verbosity = .3;    # parameter for number of adjectives and clauses
@@ -67,7 +70,7 @@ sub atom {
 sub linked_noun {
     my( $ln, $new );
     while( 1 ) {
-	if( !defined @used_nouns || rand() < $imageness ) {
+	if( ! @used_nouns || rand() < $imageness ) {
 	    $ln = &atom(@NOUN);
 	    $new = 1;
 	} else {
