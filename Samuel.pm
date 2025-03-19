@@ -176,9 +176,9 @@ sub free_form_stanza {
 
 sub stanza {
     if( rand() < $freeness ) {
-	&free_form_stanza;
+	   &free_form_stanza;
     } else {
-	&sentence_stanza;
+	   &sentence_stanza;
     }
 }
 
@@ -236,24 +236,4 @@ sub end_page($seed) {
 EOHTML
 }
 
-
-
-######### main ###########
-
-$query = CGI->new;
-
-&start_page;
-
-$seed = $query->param('s') || (time ^ $$);
-
-$fake = srand($seed);
-
-$nstanza = 2 + int(rand($length / 2)) + int(rand($length / 2));
-
-
-for( 1..$nstanza ) {
-    print "<p>" . &stanza . "</p>\n";
-}
-
-
-&end_page($seed);
+1;
