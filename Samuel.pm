@@ -207,7 +207,8 @@ EOHTML
 
 }
 
-sub end_page($seed) {
+sub end_page {
+    my ($seed) = @_;
     print<<EOHTML;
 </strong>
 

@@ -1,26 +1,54 @@
 use lib '.';
 use Samuel;
+use Bot;
+use JSON;
 
+my $CONFIG_FILE = 'samuel_at.json';
 
+sub poem {
 
-$seed = (time ^ $$);
+    $seed = (time ^ $$);
 
-$fake = srand($seed);
+    $fake = srand($seed);
 
-$nstanza = 2 + int(rand($length / 2)) + int(rand($length / 2));
+    $nstanza = 2 + int(rand($length / 2)) + int(rand($length / 2));
 
-
-
-
-for( 1..$nstanza ) {
-    $stanza = &stanza;
-    $stanza =~ s/<br>/\n/g;
-    print $stanza;
-    if( $_ == $nstanza ) {
-        print "\n";
-    } else {
-        print "\n\n";
+    $poem = '';
+    for( 1..$nstanza ) {
+        $stanza = &stanza;
+        $stanza =~ s/<br>/\n/g;
+        $poem .= $stanza;
+        if( $_ == $nstanza ) {
+            $poem .= "\n";
+        } else {
+            $poem .= "\n\n";
+        }
     }
+    $poem;
 }
 
+sub load_config {
+    my ( $config ) = @_;
+    print("In load_config = " . $config . "\n");
+    my $json_text = do {
+       open(my $json_fh, "<:encoding(UTF-8)", $config)
+          or die("Can't open \"$config\": $!\n");
+       local $/;
+       <$json_fh>
+    };
 
+    my $json = JSON->new;
+    $json->decode($json_text);
+}
+
+print($CONFIG_FILE . "\n");
+
+my $cf = &load_config($CONFIG_FILE);
+
+my $bot = Bot->new($cf->{base_url}, $cf->{access_token});
+
+# my $verses = &poem;
+
+# $bot->post($verses);
+
+$bot->get
