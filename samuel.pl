@@ -1,9 +1,10 @@
-use lib '.';
+use lib '/home/mike/bots/samuel/';
 use Samuel;
 use Bot;
 use JSON;
 
-my $CONFIG_FILE = 'samuel_at.json';
+
+my $CONFIG_FILE = '/home/mike/bots/samuel/samuel_at.json';
 
 sub poem {
 
@@ -29,7 +30,6 @@ sub poem {
 
 sub load_config {
     my ( $config ) = @_;
-    print("In load_config = " . $config . "\n");
     my $json_text = do {
        open(my $json_fh, "<:encoding(UTF-8)", $config)
           or die("Can't open \"$config\": $!\n");
@@ -41,14 +41,11 @@ sub load_config {
     $json->decode($json_text);
 }
 
-print($CONFIG_FILE . "\n");
-
 my $cf = &load_config($CONFIG_FILE);
 
 my $bot = Bot->new($cf->{base_url}, $cf->{access_token});
 
-# my $verses = &poem;
+my $verses = &poem;
 
-# $bot->post($verses);
+$bot->post($verses, $cf->{content_warning});
 
-$bot->get

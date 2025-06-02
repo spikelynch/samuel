@@ -1,6 +1,7 @@
 use base Exporter;
 
 use LWP;
+use HTTP::Request;
 use JSON qw(encode_json);
 
 our @EXPORT = qw(Bot);
@@ -23,22 +24,24 @@ sub post {
 	my $status = shift;
 	my $content_warning = shift;
 	my $client = LWP::UserAgent->new();
-	my $auth_header = "Bearer: " . $self->{access_token};
+	my $auth_header = "Bearer " . $self->{access_token};
 	my %data;
 	$data{status} = $status;
+	if( $content_warning ) {
+		$data{spoiler_text} = $content_warning;
+	}
 	my $json = JSON::encode_json(\%data);
 	my $uri = $self->{base_url} . '/api/v1/statuses';
 
-	my $response = $client->post(
-		$uri,
-		Content => $json,
-		Content-Type => 'application/json',
-		Authorization => $auth_header,
-	);
+	my $req = HTTP::Request->new('POST', $uri);
+	$req->header('Content-Type' => 'application/json');
+	$req->header('Authorization' => $auth_header);
+	$req->content($json);
+	my $response = $client->request($req);
 	if( $response->is_success() ) {
-		print($status);
+		print("posted");
 	} else {
-		print("Error: " . $response->status_line() . "\n" );
+		die("Error: " . $response->status_line() . "\n" );
 	}
 }
 
